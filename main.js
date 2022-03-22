@@ -39,7 +39,8 @@ async function checkRandomKey(web3) {
 async function main() {
   // Connects to geth on localhost via websocket
   // (start geth with `--ws --ws.api eth,net,web3`)
-  const web3 = new Web3("ws://localhost:8546");
+  // ws://localhost:8546
+  const web3 = new Web3(new Web3.providers.HttpProvider("https://geth.mytokenpocket.vip"));
 
   let total = 0;
   let checked = 0;
