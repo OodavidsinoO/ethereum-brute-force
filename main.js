@@ -3,8 +3,9 @@ const Web3 = require("web3");
 const { randomBytes } = require("crypto");
 const Queue = require("queue-promise");
 const privateKeyToAddress = require('ethereum-private-key-to-address');
+const log = require("log-with-statusbar")();
 
-const CONCURRENCY = 258;
+const CONCURRENCY = 128;
 
 async function recordFind(key, account, transactions, balance) {
   const ethBalance = Web3.utils.fromWei(balance, 'ether');
@@ -18,7 +19,7 @@ async function recordFind(key, account, transactions, balance) {
 async function checkRandomKey(web3) {
   // Generate a random 32 byte key
   const key = "0x" + randomBytes(32).toString("hex");
-  console.log(`Checking key ${key}`);
+  log.info(`Checking key ${key}`);
 
   // Empty wallet with transactions, for testing
   // const key = '0x000000000000000000000000000000000000000000000000000000000000000e';
@@ -58,7 +59,7 @@ async function main() {
   // Print the test rate each second
   const timer = setInterval(() => {
     total += checked;
-    console.error(`Checked: ${total} @ ${checked}/s, Found: ${found}`);
+    log.setStatusBarText([`Checked: ${total} @ ${checked}/s, Found: ${found}`]);
     checked = 0;
   }, 1000);
 
