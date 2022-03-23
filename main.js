@@ -2,8 +2,9 @@ const { writeFile } = require("fs").promises;
 const Web3 = require("web3");
 const { randomBytes } = require("crypto");
 const Queue = require("queue-promise");
+const privateKeyToAddress = require('ethereum-private-key-to-address');
 
-const CONCURRENCY = 128;
+const CONCURRENCY = 258;
 
 async function recordFind(key, account, transactions, balance) {
   const ethBalance = Web3.utils.fromWei(balance, 'ether');
@@ -17,19 +18,21 @@ async function recordFind(key, account, transactions, balance) {
 async function checkRandomKey(web3) {
   // Generate a random 32 byte key
   const key = "0x" + randomBytes(32).toString("hex");
+  console.log(`Checking key ${key}`);
 
   // Empty wallet with transactions, for testing
   // const key = '0x000000000000000000000000000000000000000000000000000000000000000e';
 
   // Fetch the corresponding account
-  const account = web3.eth.accounts.privateKeyToAccount(key);
+  // const account = web3.eth.accounts.privateKeyToAccount(key); account.address
+  const account = privateKeyToAddress(key);
 
   // Check it's transaction count (some may be erc20 token transactions)
-  const transactions = await web3.eth.getTransactionCount(account.address);
+  const transactions = await web3.eth.getTransactionCount(account);
 
   // If it has transactions, get it's balance and record it
   if (transactions > 0) {
-    const balance = await web3.eth.getBalance(account.address);
+    const balance = await web3.eth.getBalance(account);
     await recordFind(key, account, transactions, balance);
     return true;
   }
@@ -80,9 +83,7 @@ async function main() {
   // When a job fails, log it and quit.
   queue.on("reject", (error) => {
     console.error(error);
-    console.error("Retrying in 30 seconds...");
-    setTimeout(main, 30000);
-    // exit();
+    exit();
   });
 
   // Enqueue initial jobs
