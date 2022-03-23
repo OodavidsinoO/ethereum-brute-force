@@ -80,7 +80,9 @@ async function main() {
   // When a job fails, log it and quit.
   queue.on("reject", (error) => {
     console.error(error);
-    exit();
+    console.error("Retrying in 30 seconds...");
+    setTimeout(main, 30000);
+    // exit();
   });
 
   // Enqueue initial jobs
