@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "random": "node main.js",
-    "keymap": "node mainKeymap.js"
+    "random": "node random.js",
+    "keymap": "node keymap.js"
   },
   "author": "",
   "license": "ISC",
