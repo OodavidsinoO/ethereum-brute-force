@@ -19,26 +19,23 @@ It will be very slow running against a `--syncmode light` node to the point wher
 To install dependencies run:
 
 ```sh
-$ npm install
+$ yarn
 ```
 
 And to start the script run:
 
 ```sh
-$ npm start
+$ yarn wsRandom
+$ yarn wsBip39
+$ yarn etherscanRandom
+$ yarn etherscanBip39
 ```
 
 You'll see output like the following:
 
 ```sh
 $ node main.js
-Checked: 722 @ 722/s, Found: 0
-Checked: 1562 @ 840/s, Found: 0
-Checked: 2422 @ 860/s, Found: 0
-Checked: 3342 @ 920/s, Found: 0
-Checked: 4262 @ 920/s, Found: 0
-Checked: 5192 @ 930/s, Found: 0
-Checked: 6142 @ 950/s, Found: 0
+🔍 Checked: 30000 @ 120/s | 🌟 Found: 0
 ```
 
 If any accounts with balance are found (they won't be), you can see them logged in the 'wallets' file:
