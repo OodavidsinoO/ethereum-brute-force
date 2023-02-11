@@ -42,10 +42,9 @@ async function checkRandomKeys(keys = []) {
                           }
                        })
                        // Use a different API key if this one is out of requests
-                        .catch((res, error) => {
+                        .catch((error) => {
                           console.error(error);
-                          console.log(res);
-                          return checkRandomKeys(keys);
+                          return checkRandomKeys();
                         });
 
   // If it has transactions, get it's balance and record it
@@ -66,7 +65,7 @@ async function main() {
 
   const queue = new Queue({
     concurrent: CONCURRENCY,
-    interval: 10,
+    interval: 0,
     start: true,
   });
 
