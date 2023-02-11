@@ -3,9 +3,8 @@ const Web3 = require("web3");
 const { randomBytes } = require("crypto");
 const Queue = require("queue-promise");
 const privateKeyToAddress = require('ethereum-private-key-to-address');
-const log = require("log-with-statusbar")();
 
-const CONCURRENCY = 128;
+const CONCURRENCY = 1024;
 
 async function recordFind(key, account, transactions, balance) {
   const ethBalance = Web3.utils.fromWei(balance, 'ether');
@@ -19,7 +18,7 @@ async function recordFind(key, account, transactions, balance) {
 async function checkRandomKey(web3) {
   // Generate a random 32 byte key
   const key = "0x" + randomBytes(32).toString("hex");
-  log.info(`Checking key ${key}`);
+  console.log(`Checking key ${key}`);
 
   // Empty wallet with transactions, for testing
   // const key = '0x000000000000000000000000000000000000000000000000000000000000000e';
@@ -43,8 +42,11 @@ async function checkRandomKey(web3) {
 async function main() {
   // Connects to geth on localhost via websocket
   // (start geth with `--ws --ws.api eth,net,web3`)
-  // ws://localhost:8546
-  const web3 = new Web3(new Web3.providers.HttpProvider("https://geth.mytokenpocket.vip"));
+  // https://api.mycryptoapi.com/eth
+  // https://nodes.mewapi.io/rpc/eth
+  // https://geth.mytokenpocket.vip
+  const web3 = new Web3(new Web3.providers.HttpProvider("https://nodes.mewapi.io/rpc/eth"));
+  // const web3 = new Web3("ws://127.0.0.1:8546");
 
   let total = 0;
   let checked = 0;
@@ -59,7 +61,7 @@ async function main() {
   // Print the test rate each second
   const timer = setInterval(() => {
     total += checked;
-    log.setStatusBarText([`Checked: ${total} @ ${checked}/s, Found: ${found}`]);
+    process.stdout.write(`[${Date.now()}] Checked: ${total} @ ${checked}/s, Found: ${found}\r`);
     checked = 0;
   }, 1000);
 
