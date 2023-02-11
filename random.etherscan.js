@@ -71,6 +71,7 @@ async function main() {
     for (const key of tempKeysPool) {
       console.log('Checking ' + key.green);
     }
+    tempKeysPool = [];
     process.stdout.write(`🔍 Checked: ${total} @ ${checked}/s | Progress: ${(total/MAX*100).round(4)}% (Max: ${MAX}) | 🌟 Found: ${found}`);
     checked = 0;
   }, 1000);
