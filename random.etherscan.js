@@ -2,9 +2,13 @@ const { writeFile } = require("fs").promises;
 const { randomBytes } = require("crypto");
 const Queue = require("queue-promise");
 const privateKeyToAddress = require('ethereum-private-key-to-address');
+const colors = require('colors');
 const { apiKeys, apiEndpoint } = require("./configs.js");
 
-const CONCURRENCY = 5;
+colors.enable();
+
+const CONCURRENCY = 1; // 5 API Calls per second
+let tempKeysPool = [];
 
 async function recordFind(key, account, balance) {
   const ethBalance = balance / 1e9;
@@ -23,7 +27,14 @@ async function checkRandomKeys(keys = [...Array(20).keys()].map(() => "0x" + ran
   // Request etherscan for the balances of the generated keys
   // If the API key is out of requests, it will retry with another key
   let response = await fetch(`${apiEndpoint.etherscan}?module=account&action=balancemulti&address=${publicKeys.join(",")}&tag=latest&apikey=${apiKeys.etherscan[Math.floor(Math.random() * apiKeys.etherscan.length)]}`)
-                       .then((res) => { if (res.ok) { return res.json(); } else { throw new Error("Etherscan API error, Retrying..."); } })
+                       .then((res) => { return res.json(); } )
+                       .then((json) => {
+                          if (json.status == "1") {
+                            return json;
+                          } else {
+                            throw new Error("Etherscan API error, Retrying...");
+                          }
+                       })
                        // Use a different API key if this one is out of requests
                         .catch((res, error) => {
                           console.error(error);
@@ -56,7 +67,11 @@ async function main() {
   const timer = setInterval(() => {
     total += checked;
     const MAX = apiKeys.etherscan.length * 20 * 100000;
-    process.stdout.write(`\r🔍 Checked: ${total} @ ${checked}/s | Progress: ${(total/MAX*100).round(4)}% (Max: ${MAX}) | 🌟 Found: ${found}                                  `);
+    // Print tempKeysPool
+    for (const key of tempKeysPool) {
+      console.log('Checking ' + key.green);
+    }
+    process.stdout.write(`🔍 Checked: ${total} @ ${checked}/s | Progress: ${(total/MAX*100).round(4)}% (Max: ${MAX}) | 🌟 Found: ${found}`);
     checked = 0;
   }, 1000);
 
@@ -90,8 +105,8 @@ async function main() {
 }
 
 // Add a round function to the Number prototype
-Number.prototype.round = function(places) {
-  return +(Math.round(this + "e+" + places)  + "e-" + places);
+Number.prototype.round = function (places) {
+  return +(Math.round(this + "e+" + places) + "e-" + places);
 }
 
 main();
