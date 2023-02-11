@@ -63,7 +63,7 @@ async function main() {
     total += checked;
     process.stdout.write(`\r🔍 Checked: ${total} @ ${checked}/s | 🌟 Found: ${found}                      `);
     checked = 0;
-  }, 500);
+  }, 1000);
 
   const exit = () => {
     clearInterval(timer);
