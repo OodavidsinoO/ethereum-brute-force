@@ -29,18 +29,22 @@ async function checkRandomKeys(keys = [...Array(20).keys()].map(() => "0x" + ran
   let response = await fetch(`${apiEndpoint.etherscan}?module=account&action=balancemulti&address=${publicKeys.join(",")}&tag=latest&apikey=${apiKeys.etherscan[Math.floor(Math.random() * apiKeys.etherscan.length)]}`)
                        .then((res) => { return res.json(); } )
                        .then((json) => {
-                          if (json.status == "1") {
+                          if ((json.status == "1") && (json.message == "OK")) {
                             return json;
                           } else {
                             throw new Error("Etherscan API error, Retrying...");
                           }
                        })
                        // Use a different API key if this one is out of requests
-                       .catch((error) => {
-                        console.error(error);
-                        return checkRandomKeys();
-                      });
+                        .catch((error) => {
+                          console.error(error);
+                          checkRandomKeys();
+                          return false;
+                        });
 
+  if (!response) {
+    return false;
+  }
   // If it has transactions, get it's balance and record it
   for (const account of response.result) {
     if (account.balance > 0) {
