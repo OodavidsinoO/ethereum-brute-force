@@ -34,7 +34,7 @@ $ yarn etherscanBip39
 You'll see output like the following:
 
 ```sh
-$ node main.js
+$ yarn etherscanBip39
 🔍 Checked: 30000 @ 120/s | 🌟 Found: 0
 ```
 
