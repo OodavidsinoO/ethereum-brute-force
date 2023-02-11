@@ -55,7 +55,8 @@ async function main() {
   // Print the test rate each second
   const timer = setInterval(() => {
     total += checked;
-    process.stdout.write(`\r🔍 Checked: ${total} @ ${checked}/s | 🌟 Found: ${found}                                  `);
+    const MAX = apiKeys.etherscan.length * 20 * 100000;
+    process.stdout.write(`\r🔍 Checked: ${total} @ ${checked}/s | Progress: ${(total/MAX*100).round(4)}% (Max: ${MAX}) | 🌟 Found: ${found}                                  `);
     checked = 0;
   }, 1000);
 
@@ -86,6 +87,11 @@ async function main() {
   for (i = 0; i < CONCURRENCY; i++) {
     queue.enqueue(() => checkRandomKeys());
   }
+}
+
+// Add a round function to the Number prototype
+Number.prototype.round = function(places) {
+  return +(Math.round(this + "e+" + places)  + "e-" + places);
 }
 
 main();
