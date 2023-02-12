@@ -70,6 +70,8 @@ async function main() {
   const timer = setInterval(() => {
     total += checked;
     const MAX = apiKeys.etherscan.length * 20 * 100000;
+    // Clear the console
+    console.clear();
     // Print tempKeysPool
     for (const key of tempKeysPool) {
       console.log('Checking ' + key.green);
